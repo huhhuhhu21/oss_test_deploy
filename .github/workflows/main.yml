@@ -3,23 +3,16 @@ name: Deploy PHP to Somee
 on:
   push:
     branches:
-      - main  # Hoặc 'master' tùy tên nhánh của bạn
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Lấy code từ GitHub về
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    # 2. (Tuỳ chọn) Nếu bạn dùng Composer để quản lý thư viện
-    # Bỏ comment 2 dòng dưới nếu dự án có file composer.json
-    # - name: Install Dependencies
-    #   run: composer install --no-dev --optimize-autoloader
-
-    # 3. Đẩy code sang Somee qua FTP
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@4.3.5
       with:
@@ -27,47 +20,13 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         
-        # Quan trọng: PHP chạy trực tiếp, nên lấy code từ thư mục gốc
+        # QUAN TRỌNG: Trỏ đúng vào thư mục tên miền của bạn trên Somee
+        server-dir: /www.nmhoss.somee.com/
+        
+        # Lấy toàn bộ code ở thư mục hiện tại
         local-dir: ./
         
-        # Loại bỏ các file rác không cần đẩy lên host
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/.github/**
-          **/README.mdname: Deploy PHP to Somee
-
-on:
-  push:
-    branches:
-      - main  # Hoặc 'master' tùy tên nhánh của bạn
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    # 1. Lấy code từ GitHub về
-    - name: Checkout Code
-      uses: actions/checkout@v4
-
-    # 2. (Tuỳ chọn) Nếu bạn dùng Composer để quản lý thư viện
-    # Bỏ comment 2 dòng dưới nếu dự án có file composer.json
-    # - name: Install Dependencies
-    #   run: composer install --no-dev --optimize-autoloader
-
-    # 3. Đẩy code sang Somee qua FTP
-    - name: FTP Deploy
-      uses: SamKirkland/FTP-Deploy-Action@4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        
-        # Quan trọng: PHP chạy trực tiếp, nên lấy code từ thư mục gốc
-        local-dir: ./
-        
-        # Loại bỏ các file rác không cần đẩy lên host
+        # Bỏ qua các file không cần thiết
         exclude: |
           **/.git*
           **/.git*/**
